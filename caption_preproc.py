@@ -4,9 +4,6 @@
 import string
 import joblib
 
-SOS_TOKEN = 'zsosz'
-EOS_TOKEN = 'zeosz'
-
 def clean_captions(captions):
     table = str.maketrans('', '', string.punctuation)
     for _, cap_list in captions.items():
@@ -20,13 +17,10 @@ def clean_captions(captions):
             cap = [w.translate(table) for w in cap]
             # remove tokens with numbers in them
             cap = [w for w in cap if w.isalpha()]
+            # remove hanging 's' and 'a'
+            cap = [w for w in cap if len(w) > 1]
             # store as string
             cap_list[i] = ' '.join(cap)
-    return captions
-
-def add_sos_eos(captions):
-    for k in captions.keys():
-        captions[k] = list(map(lambda x: SOS_TOKEN + ' ' + x + ' ' + EOS_TOKEN, captions[k]))
     return captions
 
 if __name__ == "__main__":
@@ -44,9 +38,6 @@ if __name__ == "__main__":
 
     # Clean captions
     cleaned_captions = clean_captions(captions)
-
-    # Add start and end token
-    cleaned_captions = add_sos_eos(cleaned_captions)
 
     # Save captions
     with open('flickr8k/cleaned_captions.pkl', 'wb') as f:
