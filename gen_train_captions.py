@@ -6,16 +6,25 @@ import joblib
 SOS_TOKEN = 'zsosz'
 EOS_TOKEN = 'zeosz'
 
-def to_vocabulary(captions):
-    all_caps = set()
-    for k in captions.keys():
-        [all_caps.update(c.split()) for c in captions[k]]
-    return all_caps
+TH_WORD_COUNT = 10
+
+def to_vocabulary(words):
+    vocab = set()
+    [vocab.add(word) for word in words]
+    return vocab
 
 def add_sos_eos(captions):
     for k in captions.keys():
         captions[k] = list(map(lambda x: SOS_TOKEN + ' ' + x + ' ' + EOS_TOKEN, captions[k]))
     return captions
+
+def filter_by_count(captions):
+    word_counts = {}
+    for k in captions.keys():
+        for v in captions[k]:
+            for w in v.split(' '):
+                word_counts[w] = word_counts.get(w, 0) + 1
+    return [w for w in word_counts if word_counts[w] >= TH_WORD_COUNT]
 
 if __name__ == "__main__":
     with open('flickr8k/cleaned_captions.pkl', 'rb') as f:
@@ -39,8 +48,10 @@ if __name__ == "__main__":
         joblib.dump(train_captions, f, compress=3)
 
     # Save vocabulary
-    vocabulary = to_vocabulary(train_captions)
+    train_words = filter_by_count(train_captions)
+    vocabulary = to_vocabulary(train_words)
     with open('flickr8k/vocabulary.txt', 'w') as f:
         for vocab in vocabulary:
             f.writelines(vocab)
             f.writelines('\n')
+    print('Vocabulary size:', len(vocabulary))
