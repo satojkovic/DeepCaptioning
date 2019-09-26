@@ -31,18 +31,31 @@ class ImageEncoder:
         img_array = preprocess_input(img_array)
         return img_array
 
+def read_images_file(image_file):
+    imgs = []
+    with open(image_file, 'r') as f:
+        for line in f:
+            line = line.strip()
+            imgs.append(os.path.join('flickr8k', 'Flicker8k_Dataset', line))
+    return imgs
+
+def gen_feats(imgs):
+    img_feats = {}
+    for img in tqdm(imgs):
+        img_feats[os.path.basename(img)] = img_encoder.encode(img)
+    return img_feats
+
+def save_feats(feats, save_fname):
+    with open(save_fname, 'wb') as f:
+        joblib.dump(feats, f, compress=3)
+
 if __name__ == "__main__":
     img_encoder = ImageEncoder()
 
-    train_imgs = []
-    with open('flickr8k/Flickr_8k.trainImages.txt', 'r') as f:
-        for line in f:
-            line = line.strip()
-            train_imgs.append(os.path.join('flickr8k', 'Flicker8k_Dataset', line))
+    train_imgs = read_images_file('flickr8k/Flickr_8k.trainImages.txt')
+    train_feats = gen_feats(train_imgs)
+    save_feats(train_feats, 'flickr8k/train_image_feats.pkl')
 
-    img_feats = {}
-    for train_img in tqdm(train_imgs):
-        img_feats[os.path.basename(train_img)] = img_encoder.encode(train_img)
-
-    with open('flickr8k/train_image_feats.pkl', 'wb') as f:
-        joblib.dump(img_feats, f, compress=3)
+    test_imgs = read_images_file('flickr8k/Flickr_8k.testImages.txt')
+    test_feats = gen_feats(test_imgs)
+    save_feats(test_feats, 'flickr8k/test_image_feats.pkl')
