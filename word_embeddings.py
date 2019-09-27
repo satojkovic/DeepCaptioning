@@ -2,6 +2,7 @@
 # -*- coding=utf-8 -*-
 
 import numpy as np
+import joblib
 
 class GloveVec:
     def __init__(self, vocabulary, embed_dim=200):
@@ -46,3 +47,8 @@ if __name__ == "__main__":
     glove_vec = GloveVec(vocab)
     print('embedding_matrix:', glove_vec.embed_mat.shape)
 
+    with open('flickr8k/word2idx.pkl', 'wb') as f:
+        joblib.dump(glove_vec.word2idx, f, compress=3)
+
+    with open('flickr8k/idx2word.pkl', 'wb') as f:
+        joblib.dump(glove_vec.idx2word, f, compress=3)

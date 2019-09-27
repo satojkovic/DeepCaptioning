@@ -12,17 +12,21 @@ from word_embeddings import GloveVec
 
 def max_length(captions):
     lines = []
-    for k in train_captions.keys():
-        for cap in train_captions[k]:
+    for k in captions.keys():
+        for cap in captions[k]:
             lines.append(cap)
     return max([len(d.split()) for d in lines])
+
+def get_train_captions(path):
+    with open(path, 'rb') as f:
+        train_captions = joblib.load(f)
+    return train_captions
 
 if __name__ == "__main__":
     # Load data
     vocab = np.loadtxt('flickr8k/vocabulary.txt', dtype=str)
 
-    with open('flickr8k/train_captions.pkl', 'rb') as f:
-        train_captions = joblib.load(f)
+    train_captions = get_train_captions('flickr8k/train_captions.pkl')
     max_length = max_length(train_captions)
     print('max_length:', max_length)
 
