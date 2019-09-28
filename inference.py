@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     # Load trained model
     img_cap_model = ImgCapModel()
-    img_cap_model.model.load_weights('model_weights/model_9.h5')
+    img_cap_model.model.load_weights('model_weights/model_19.h5')
     result_text = img_cap_model.greedy_search(target_img_feat, word2idx, idx2word)
 
     x = plt.imread(os.path.join('flickr8k', 'Flicker8k_Dataset', target_img))

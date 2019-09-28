@@ -45,7 +45,7 @@ if __name__ == "__main__":
     img_cap_model.model.compile(loss='categorical_crossentropy', optimizer='adam')
 
     # Training
-    num_epochs = 10
+    num_epochs = 30
     batch_size = 3
     steps = len(train_captions) // batch_size
     for i in range(num_epochs):
