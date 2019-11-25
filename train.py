@@ -9,6 +9,8 @@ from data_generator import data_generator
 from model import ImgCapModel
 from word_embeddings import GloveVec
 
+import argparse
+import os
 
 def max_length(captions):
     lines = []
@@ -22,15 +24,22 @@ def get_train_captions(path):
         train_captions = joblib.load(f)
     return train_captions
 
-if __name__ == "__main__":
-    # Load data
-    vocab = np.loadtxt('flickr8k/vocabulary.txt', dtype=str)
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dataset_root', type=str, required=True, help='Path to dataset root directory (flickr8k or COCO)')
+    return parser.parse_args()
 
-    train_captions = get_train_captions('flickr8k/train_captions.pkl')
+if __name__ == "__main__":
+    args = parse_args()
+
+    # Load data
+    vocab = np.loadtxt(os.path.join(args.dataset_root, 'vocabulary.txt'), dtype=str)
+
+    train_captions = get_train_captions(os.path.join(args.dataset_root, 'train_captions.pkl'))
     max_length = max_length(train_captions)
     print('max_length:', max_length)
 
-    with open('flickr8k/train_image_feats.pkl', 'rb') as f:
+    with open(os.path.join(args.dataset_root, 'train_image_feats.pkl'), 'rb') as f:
         img_feats = joblib.load(f)
 
     # Model definition

@@ -38,7 +38,6 @@ class GloveVec:
             embed_vec = self.embed_idx.get(word)
             if embed_vec is not None:
                 self.embed_mat[idx] = embed_vec
-        assert self.embed_mat.shape == (1652, 200)
 
 if __name__ == "__main__":
     # Load vocabulary
