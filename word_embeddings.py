@@ -3,6 +3,8 @@
 
 import numpy as np
 import joblib
+import argparse
+import os
 
 class GloveVec:
     def __init__(self, vocabulary, embed_dim=200):
@@ -39,15 +41,22 @@ class GloveVec:
             if embed_vec is not None:
                 self.embed_mat[idx] = embed_vec
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dataset_root', type=str, required=True, help='Path to dataset root directory (flickr8k or COCO)')
+    return parser.parse_args()
+
 if __name__ == "__main__":
+    args = parse_args()
+
     # Load vocabulary
-    vocab = np.loadtxt('flickr8k/vocabulary.txt', dtype=str)
+    vocab = np.loadtxt(os.path.join(args.dataset_root, 'vocabulary.txt'), dtype=str)
 
     glove_vec = GloveVec(vocab)
     print('embedding_matrix:', glove_vec.embed_mat.shape)
 
-    with open('flickr8k/word2idx.pkl', 'wb') as f:
+    with open(os.path.join(args.dataset_root, 'word2idx.pkl'), 'wb') as f:
         joblib.dump(glove_vec.word2idx, f, compress=3)
 
-    with open('flickr8k/idx2word.pkl', 'wb') as f:
+    with open(os.path.join(args.dataset_root, 'idx2word.pkl'), 'wb') as f:
         joblib.dump(glove_vec.idx2word, f, compress=3)
