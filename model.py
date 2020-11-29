@@ -30,18 +30,17 @@ class ImgCapModel:
         self.model.summary()
 
     def greedy_search(self, img_feat, word2idx, idx2word):
-        in_text = SOS_TOKEN
+        in_text = [SOS_TOKEN]
         for i in range(self.max_length):
-            seq = [word2idx[w] for w in in_text.split() if w in word2idx]
+            seq = [word2idx[w] for w in in_text if w in word2idx]
             seq = pad_sequences([seq], maxlen=self.max_length)
             yhat = self.model.predict([img_feat, seq], verbose=False)
             yhat = np.argmax(yhat)
             word = idx2word[yhat]
-            in_text += ' ' + word
+            in_text.append(word)
             if word == EOS_TOKEN:
                 break
-        result_text = in_text.split()
-        result_text = result_text[1:-1]
+        result_text = in_text[1:-1] if in_text[-1] == EOS_TOKEN else in_text[1:]
         return ' '.join(result_text)
 
 if __name__ == "__main__":
