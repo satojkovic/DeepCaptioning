@@ -3,7 +3,6 @@
 
 import joblib
 import numpy as np
-from keras.engine.training_generator import fit_generator
 
 from data_generator import data_generator
 from model import ImgCapModel
