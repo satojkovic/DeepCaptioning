@@ -37,11 +37,12 @@ if __name__ == "__main__":
     # Load trained model
     img_cap_model = ImgCapModel(vocab_size=len(word2idx.keys()) + 1)
     img_cap_model.model.load_weights(args.model_path)
-    result_text = img_cap_model.greedy_search(target_img_feat, word2idx, idx2word)
+    greedy_text = img_cap_model.greedy_search(target_img_feat, word2idx, idx2word)
+    beam_text = img_cap_model.beam_search(target_img_feat, word2idx, idx2word, beam_width=3)
 
     if args.dataset_root == 'COCO':
         target_img = 'COCO_val2014_' + '%012d.jpg' % (target_img)
     x = plt.imread(os.path.join(args.img_root, target_img))
     plt.imshow(x)
-    plt.title(result_text)
+    plt.title('\n'.join(['Greedy: ' + greedy_text, 'Beam:' + beam_text]))
     plt.show()
